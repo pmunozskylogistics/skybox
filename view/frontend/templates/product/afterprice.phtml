@@ -1,0 +1,165 @@
+<?php
+/**
+ * @var $block \Skybox\Checkout\Block\AfterPrice
+ */
+
+if($block->isEnabled()) {   
+
+    $parts = explode("*", $block->getConfig()->getMerchantId());
+
+    if(count($parts)>1){
+        //EXTERNAL LINK
+        $url = $parts[1];
+    }else{
+        $url = "https://s3.amazonaws.com/sky-sbc-resources/Resources/". $block->getConfig()->getMerchantId() ."/magento2.". $block->getConfig()->getMerchantId() .".js";        
+    }    
+
+    ?>
+    <script>        
+
+       inIframe = function() {
+            try {
+                return window.self !== window.top;
+            }
+            catch {
+                return true;
+            }
+        }
+
+        if(inIframe()){
+
+            //INSERT tag change Country
+            var countryNode = document.getElementById("skybox-checkout-change-country");
+            
+            if(countryNode != null){
+                countryNode.setAttribute("style","display:none");
+            }else{
+                var divChangeCountry = document.createElement("div")
+                divChangeCountry.setAttribute("id","skybox-checkout-change-country");
+                divChangeCountry.setAttribute("style","display:none");
+                document.getElementsByTagName("body")[0].appendChild(divChangeCountry);
+            }
+
+            var url = <?php echo "'" . $url . "'";?>;
+            var script = document.createElement("script")
+            script.type = "text/javascript";
+
+            if (script.readyState){  //IE
+                script.onreadystatechange = function(){
+                    if (script.readyState == "loaded" ||
+                            script.readyState == "complete"){
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {  //Others
+                script.onload = function(){
+                    console.log("on iframe");
+                };
+            }            
+            script.src = url;
+            document.getElementsByTagName("head")[0].appendChild(script);
+        }
+    </script>
+    <div class='skbx-price'>
+        <div class='skbx-loader-<?php /* @escapeNotVerified */ echo $block->getProductId(); ?>'></div>
+        <div class='internationalPrice'
+                id='skybox-product-price-<?php /* @escapeNotVerified */ echo $block->getProductId(); ?>'
+                data='<?php /* @escapeNotVerified */ echo $block->getProductData(); ?>'>
+        </div>
+    </div>
+    <?php
+
+
+    $customOptionsUsed  = false;
+    $confProductUsed    = false;
+
+    if($block->hasChilds()){
+        $childrenJsonData = $block->getChildsData();
+        foreach ($childrenJsonData as $id => $childJsonData) {
+            if($block->onCatalog()){?>        
+                <div style="display:none">
+                    <div class='skbx-loader-<?php /* @escapeNotVerified */ echo $id; ?>'></div>
+                    <div class='international--Price'
+                        id='skybox--product--price--<?php /* @escapeNotVerified */ echo $id; ?>'
+                        data='<?php /* @escapeNotVerified */ echo $childJsonData; ?>'>
+                    </div>
+                </div>
+            <?php }else{ ?>
+                <div style="display:none">
+                    <div class='skbx-loader-<?php /* @escapeNotVerified */ echo $id; ?>'></div>
+                    <div class='internationalPrice'
+                        id='skybox-product-price-<?php /* @escapeNotVerified */ echo $id; ?>'
+                        data='<?php /* @escapeNotVerified */ echo $childJsonData; ?>'>
+                    </div>
+                </div>
+            <?php
+            }
+        }
+        $confProductUsed = true;
+    }
+
+    if($block->hasCustomOption()){
+        ?>
+
+        <div style="display:none">
+            <div class=' skbx-loader-cust-var skbx-loader-'></div>
+            <div class='internationalPrice skbx-product-price-cust-var'
+                id=''
+                data='<?php /* @escapeNotVerified */ echo $block->getProductData(); ?>'>
+            </div>
+        </div>
+
+        <?php
+        $customOptionsUsed = true;
+    }
+    ?>
+
+    <?php
+    
+        ?>
+        <script>
+            var childs    = <?php echo str_replace("'", "%27", json_encode($block->getChildsData())) ?> ;        
+            window.jsLoaded         = true; //Used in case to use Iframe    
+            <?php
+            if($block->onCatalog()){
+                ?>
+                window.onCatalog    = true;    
+                <?php
+            }else{
+                ?>
+                window.onCatalog    = false;    
+                <?php
+            }
+            ?>;
+            if(typeof window.optionsByProduct == 'undefined'){
+                window.optionsByProduct = {};
+            }
+            <?php
+            if($confProductUsed){
+                ?>
+                window.optionsByProduct[<?php echo $block->getProductId() ?>] = <?php echo str_replace("'", "%27", json_encode($block->getAllAttributesOptions()));  ?>;
+                window.confProductUsed = true;
+                <?php
+            }else{
+                ?>
+                window.confProductUsed  = false;
+                <?php
+            }
+            if($customOptionsUsed){
+                ?>
+                window.customOptionsUsed    = true;
+                window.productParentId     = <?php echo $block->getProductId(); ?>;
+                <?php
+            }else{
+                ?>
+                window.customOptionsUsed = false;
+                <?php
+            }
+            ?>
+            
+        </script>
+        <?php
+    
+}
+?>

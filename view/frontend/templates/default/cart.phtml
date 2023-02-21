@@ -1,0 +1,53 @@
+<?php
+/**
+ * @var $block \Skybox\Checkout\Block\Cart
+ */ 
+
+if ($block->isEnabled()) {    
+    
+    $parts = explode("*", $block->getConfig()->getMerchantId());
+
+    if(count($parts)>1){
+        //EXTERNAL LINK
+        $scriptSrc = $parts[1];
+        $merchantId = $parts[0];
+    }else{
+        $scriptSrc = "https://s3.amazonaws.com/sky-sbc-resources/Resources/". $block->getConfig()->getMerchantId() ."/magento2.". $block->getConfig()->getMerchantId() .".js";
+        $merchantId = $block->getConfig()->getMerchantId();
+    }
+
+    
+if($block->getIntegrationType()==1) {
+?>
+    <div id="skybox-checkout-change-country"></div>
+<?php }else{?>
+    <div id="skybox-checkout-change-country" style="display:none"></div>
+<?php }?>
+<script>
+
+    <?php if($block->getIntegrationType()==1) { ?>
+        requirejs(['jquery'], function($) {
+            $(document).ready(function() {            
+                $('button.action.primary.tocart').addClass('Sky--btn-add');
+                $('button.action.primary.checkout').addClass('skbx-price-store');
+            });
+        });
+    <?php }?>
+
+    localStorage.setItem('skb-cfg', '{ "merchantId": "<?php echo $merchantId; ?>", ' +
+        '"merchantCode": "<?php echo $block->getConfig()->getMerchantCode(); ?>", ' +
+        '"merchantKey": "<?php echo $block->getConfig()->getMerchantKey(); ?>", ' +
+        '"IdStore": <?php echo $block->getConfig()->getStoreId(); ?>, ' +
+        '"weightUnit": "<?php echo $block->getConfig()->getWeigthUnit(); ?>", ' +
+        '"baseURL": "<?php echo $block->getBaseUrl() ?>", ' +
+        '"apiUrl": "<?php echo $block->getConfig()->getApiUrl(); ?>", ' +
+        '"clientUrl": "<?php echo $block->getConfig()->getClientUrl(); ?>", '+
+        '"checkoutUrl": "<?php echo $block->getUrl('skbcheckout/international'); ?>", '+
+        '"successUrl": "/skbcheckout/international/success", '+
+        '"cartUrl": "<?php echo $block->getUrl('skbcheckout/cart'); ?>", '+
+        '"scriptSrc": "<?php echo $scriptSrc; ?>" '+
+    '}');
+</script>
+
+<script src=<?php echo $scriptSrc; ?>></script>
+<?php } ?>

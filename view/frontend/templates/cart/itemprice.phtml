@@ -1,0 +1,10 @@
+<?php
+/**
+ * @var $block \Skybox\Checkout\Block\AfterPrice
+ */
+
+if($block->isEnabled()) {
+ ?>
+<div class='skbx-loader-<?php /* @escapeNotVerified */ echo $block->getProductId(); ?>'></div>
+<span class='sky--Price-<?php /* @escapeNotVerified */ echo $block->getProductId(); ?>'></span>
+<?php } ?>

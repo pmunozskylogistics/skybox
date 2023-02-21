@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/generateorder" method="POST">
+        <service class="Skybox\Checkout\Api\GenerateOrderInterface" method="create"/>
+        <resources>
+            <resource ref="Skybox_Checkout::createOrder"/>
+        </resources>
+    </route>
+    <route url="/V1/setstatusorder" method="POST">
+        <service class="Skybox\Checkout\Api\StatusOrderInterface" method="update"/>
+        <resources>
+            <resource ref="Skybox_Checkout::updateStatusOrder"/>
+        </resources>
+    </route>
+    <route url="/V1/realorderid/:orderId" method="GET">
+        <service class="Skybox\Checkout\Api\OrderReaderInterface" method="realOrderId" />
+        <resources>
+            <resource ref="Skybox_Checkout::realOrderId" />
+        </resources>
+    </route>
+</routes>
+

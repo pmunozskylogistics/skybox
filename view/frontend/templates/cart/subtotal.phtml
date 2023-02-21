@@ -1,0 +1,29 @@
+<?php
+/**
+ * Copyright © 2018 SkyBox Checkout Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+if($block->isEnabled()) {
+    
+?>
+<div class="skbx-price">
+    <?php if($block->getIntegrationType()==1){?>
+        <div class="skbx-loader-subtotal"></div>
+        <div align="center" class="international-checkout"></div>
+    <?php }?>
+        <div class="skybox-checkout-payment-btn action primary checkout"></div>
+</div>
+
+<?php
+if($block->getIntegrationType()==1) {
+?>
+<script>
+    requirejs(["jquery"], function($) {
+        $(document).ready(function() {
+            $('#top-cart-btn-checkout').addClass('skbx-price-store');
+        });
+    });
+</script>
+<?php }
+}?>

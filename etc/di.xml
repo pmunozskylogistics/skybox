@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2017 SkyBox Checkout Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Skybox\Checkout\Api\GenerateOrderInterface" type="Skybox\Checkout\Service\GenerateOrder" />
+    <preference for="Skybox\Checkout\Api\StatusOrderInterface" type="Skybox\Checkout\Service\StatusOrder"/>
+    <preference for="Skybox\Checkout\Api\OrderReaderInterface" type="Skybox\Checkout\Service\OrderReader"/>
+    <preference for="Skybox\Checkout\Api\Data\ShippingAddressInterface" type="Skybox\Checkout\Model\Data\ShippingAddress"/>
+    <preference for="Skybox\Checkout\Api\Data\TotalShoppingCartInterface" type="Skybox\Checkout\Model\Data\TotalShoppingCart"/>
+    <preference for="Skybox\Checkout\Api\Data\ConceptInterface" type="Skybox\Checkout\Model\Data\Concept"/>
+    <preference for="Skybox\Checkout\Api\Data\ProductInterface" type="Skybox\Checkout\Model\Data\Product"/>
+    <preference for="Skybox\Checkout\Api\Data\OptionInterface" type="Skybox\Checkout\Model\Data\Option"/>
+    <preference for="Skybox\Checkout\Api\Data\CustomsInterface" type="Skybox\Checkout\Model\Data\Customs"/>
+    
+    <type name="Magento\Framework\Pricing\Render" shared="false">
+        <plugin name="skybox_product_priceRender" type="Skybox\Checkout\Plugin\Product\AfterPrice" />
+    </type>
+    <type name="Magento\Checkout\Block\Cart\Item\Renderer">
+        <plugin name="Skybox_Checkout_item_renderer" type="Skybox\Checkout\Plugin\Cart\ItemRenderer" />
+    </type>
+    <type name="Magento\Tax\Block\Item\Price\Renderer">
+        <plugin name="Skybox_Checkout_ShoppingCart_item_price_renderer" type="Skybox\Checkout\Plugin\ShoppingCart\ItemPriceRender" />
+    </type>
+    <type name="Magento\Tax\Plugin\Checkout\CustomerData\Cart">
+        <plugin name="Skybox_Checkout_minicart_price_subtotal" type="Skybox\Checkout\Plugin\ShoppingCart\CustomerData" />
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Category\Save">
+        <plugin name="skybox_adminhtml_category_save" type="Skybox\Checkout\Plugin\Adminhtml\Category\Save" />
+    </type>
+    <type name="Magento\Shipping\Model\Rate\Result">
+        <plugin name="skybox_shipping_update_rate_result"
+                type="Skybox\Checkout\Plugin\Shipping\Rate\Result\Append"
+                sortOrder="10"
+                disabled="false" />
+        <plugin name="skybox_shippin_update_disabled_rates"
+                type="Skybox\Checkout\Plugin\Shipping\Rate\Result\GetAllRates"
+                sortOrder="11"
+                disabled="false" />
+    </type>
+<!--<type name="Magento\Framework\DB\Sequence\SequenceInterface">
+        <arguments>
+            <argument name="pattern" xsi:type="string">%s%'.06d%s</argument>
+        </arguments>
+    </type>-->
+    
+    <!-- Skip EAV Attributes Cache, -->
+    <type name="Magento\Eav\Model\Entity\AttributeCache">
+        <arguments>
+            <argument name="unsupportedTypes" xsi:type="array">
+                <item name="0" xsi:type="string">skybox_category_id</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
