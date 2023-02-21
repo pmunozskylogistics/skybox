@@ -97,7 +97,7 @@ class Data {
 
     public function getCustomer(){
 
-        $parts = explode("*", $this->config->getMerchantId());
+        $parts = explode("*", $this->config->getMerchantId() ?? "");
 
         if(count($parts)>1){
             //EXTERNAL LINK
