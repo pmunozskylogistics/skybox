@@ -97,13 +97,17 @@ class Data {
 
     public function getCustomer(){
 
-        $parts = explode("*", $this->config->getMerchantId() ?? "");
+        $merchantId = $this->config->getMerchantId();
+
+        if (!$merchantId) {
+            return "";
+        }
+
+        $parts = explode("*", $merchantId ?? "");
 
         if(count($parts)>1){
             //EXTERNAL LINK
             $merchantId = $parts[0];
-        }else{            
-            $merchantId = $this->config->getMerchantId();
         }
 
         $url        = $this->config->getApiUrl() . 'store/' . $merchantId . '/ipdata';
