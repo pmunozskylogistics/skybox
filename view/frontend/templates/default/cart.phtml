@@ -5,7 +5,7 @@
 
 if ($block->isEnabled()) {    
     
-    $parts = explode("*", $block->getConfig()->getMerchantId());
+    $parts = explode("*", $block->getConfig()->getMerchantId() ?? "");
 
     if(count($parts)>1){
         //EXTERNAL LINK

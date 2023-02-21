@@ -100,7 +100,7 @@ class Data {
         $merchantId = $this->config->getMerchantId();
 
         if (!$merchantId) {
-            return "";
+            return null;
         }
 
         $parts = explode("*", $merchantId ?? "");
@@ -215,6 +215,10 @@ class Data {
             
             $url        = $this->config->getApiUrl() . 'authenticate/cart';
             $customer     = $this->getCustomer();
+
+            if (is_null($customer)) {
+                return 0;
+            }
             
             $headers = [
                 "Content-Type: application/json"

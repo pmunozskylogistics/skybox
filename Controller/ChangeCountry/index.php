@@ -23,7 +23,7 @@ class Index extends \Magento\Framework\App\Action\Action
 
     public function execute() {
         $url = $this->getRequest()->getParam('url');
-        $strs = explode('***', $url);
+        $strs = explode('***', $url ?? "");
 
         $this->util->getCartData($strs[0]);
 
